@@ -1,4 +1,7 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
+import 'package:notes_app/view/editpage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,7 +20,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Color.fromARGB(255, 40, 38, 38),
       appBar: AppBar(
         backgroundColor: Colors.pink,
-        title: Center(child: Text("Notes Api")),
+        title: Center(child: Text("Notes App")),
       ),
       body: GridView.builder(
         gridDelegate:
@@ -43,6 +46,32 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     "Description: ${description}" ?? "",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => EditPage(
+                              title: noteData,
+                              description: noteData,
+                              id: noteData,
+                            ),
+                          ));
+                        },
+                        icon: Icon(Icons.edit),
+                        color: Colors.green,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.delete),
+                        color: Colors.red,
+                      )
+                    ],
                   )
                 ],
               ),
@@ -68,7 +97,7 @@ class _HomePageState extends State<HomePage> {
   AlertDialog adding(BuildContext context) {
     return AlertDialog(
       title: Text("Add Notes"),
-      content: Container(
+      content: SizedBox(
         height: 160,
         child: Column(
           children: [
@@ -76,6 +105,7 @@ class _HomePageState extends State<HomePage> {
               controller: notescontroller,
               decoration: InputDecoration(
                 hintText: "Title",
+                hintMaxLines: 1,
                 border: OutlineInputBorder(),
               ),
             ),
@@ -85,7 +115,9 @@ class _HomePageState extends State<HomePage> {
             TextField(
               controller: descriptioncontroller,
               decoration: InputDecoration(
-                  hintText: "Description", border: OutlineInputBorder()),
+                  hintText: "Description",
+                  hintMaxLines: 1,
+                  border: OutlineInputBorder()),
             ),
           ],
         ),
@@ -102,10 +134,11 @@ class _HomePageState extends State<HomePage> {
             },
             child: Text("Save")),
         TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text("Cancel"))
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text("Cancel"),
+        )
       ],
     );
   }
