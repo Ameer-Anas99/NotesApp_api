@@ -4,7 +4,7 @@ import 'package:notes_app/model/notemodel.dart';
 class ApiService {
   Dio dio = Dio();
 
-  final url = "https://659e512d47ae28b0bd358c64.mockapi.io/noteapp/note";
+  final url = "https://65ae17761dfbae409a73ed36.mockapi.io/study";
   Future<List<NoteModel>> fetchApi() async {
     try {
       Response response = await dio.get(url);
@@ -31,8 +31,7 @@ class ApiService {
   }
 
   deleteNotes({required id}) async {
-    var deleteurl =
-        "https://659e512d47ae28b0bd358c64.mockapi.io/noteapp/note/$id";
+    var deleteurl = "https://65ae17761dfbae409a73ed36.mockapi.io/study/$id";
     try {
       await dio.delete(deleteurl);
     } catch (e) {
@@ -42,8 +41,7 @@ class ApiService {
 
   editNotes({required value, required id}) async {
     try {
-      await dio.put(
-          "https://659e512d47ae28b0bd358c64.mockapi.io/noteapp/note/$id",
+      await dio.put("https://65ae17761dfbae409a73ed36.mockapi.io/study/$id",
           data: value.toJson());
     } catch (e) {
       throw Exception(e);

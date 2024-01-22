@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/controller/noteprovider.dart';
 import 'package:notes_app/view/home.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,10 +12,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: prefer_const_constructors
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        home: const HomePage());
+    return ChangeNotifierProvider(
+      create: (context) => NoteProvider(),
+      child: const MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Flutter Demo',
+          home: HomePage()),
+    );
   }
 }

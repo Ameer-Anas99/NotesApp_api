@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/controller/noteprovider.dart';
 import 'package:notes_app/model/notemodel.dart';
+import 'package:provider/provider.dart';
 
 class EditPage extends StatefulWidget {
-  final title;
-  final description;
-  final id;
+  final String title;
+  final String description;
+  final String id;
   const EditPage(
       {super.key,
       required this.title,
@@ -34,6 +36,7 @@ class _EditPageState extends State<EditPage> {
   }
 
   AlertDialog EditAlertDialog() {
+    final notespro = Provider.of<NoteProvider>(context);
     return AlertDialog(
       title: Text("Edit Notes"),
       content: SizedBox(
@@ -63,7 +66,11 @@ class _EditPageState extends State<EditPage> {
       actions: [
         TextButton(
           onPressed: () {
-            edit(id: widget.id);
+            notespro.update(
+                id: widget.id,
+                title: notescontroller.text,
+                description: descriptioncontroller.text);
+            Navigator.of(context).pop();
           },
           child: Text("Save"),
         ),
@@ -74,12 +81,5 @@ class _EditPageState extends State<EditPage> {
             child: Text("Cancel"))
       ],
     );
-  }
-
-  edit({required id}) {
-    var editnote = notescontroller.text;
-    var editdescription = descriptioncontroller.text;
-    final model =
-        NoteModel(title: editnote, description: editdescription, id: id);
   }
 }

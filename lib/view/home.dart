@@ -1,92 +1,107 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:notes_app/controller/noteprovider.dart';
 import 'package:notes_app/model/notemodel.dart';
 import 'package:notes_app/service/api_service.dart';
 import 'package:notes_app/view/editpage.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  List<Map<String, String>> notes = [];
-  TextEditingController notescontroller = TextEditingController();
-  TextEditingController descriptioncontroller = TextEditingController();
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 40, 38, 38),
+      backgroundColor: Color.fromARGB(255, 238, 232, 232),
       appBar: AppBar(
         backgroundColor: Colors.pink,
         title: Center(child: Text("Notes App")),
       ),
-      body: RefreshIndicator(
-        onRefresh: () => ApiService().fetchApi(),
-        child: FutureBuilder(
-          future: ApiService().fetchApi(),
-          builder: (context, snapshot) => GridView.builder(
-            gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-            itemCount: notes.length,
-            itemBuilder: (context, index) {
-              final noteData = notes[index];
-              final note = noteData;
-              final description = noteData;
+      body: Center(
+        child: RefreshIndicator(
+          onRefresh: () => ApiService().fetchApi(),
+          child: Consumer<NoteProvider>(
+            builder: (context, notepro, child) => FutureBuilder(
+              future: ApiService().fetchApi(),
+              builder: (context, AsyncSnapshot<List<NoteModel>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                } else {
+                  List<NoteModel> notesData = snapshot.data!;
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2),
+                    itemCount: notesData.length,
+                    itemBuilder: (context, index) {
+                      final noteData = notesData[index];
+                      final note = noteData.title;
+                      final description = noteData.description;
 
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(22)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Title :${note}" ?? "",
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Description: ${description}" ?? "",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (ctx) => EditPage(
-                                  title: noteData,
-                                  description: noteData,
-                                  id: noteData,
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(22)),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Title :${note}" ?? "",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                              ));
-                            },
-                            icon: Icon(Icons.edit),
-                            color: Colors.green,
+                                Text(
+                                  "Description: ${description}" ?? "",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (ctx) => EditPage(
+                                            title: noteData.title,
+                                            description: noteData.description,
+                                            id: noteData.id,
+                                          ),
+                                        ));
+                                      },
+                                      icon: Icon(Icons.edit),
+                                      color: Colors.green,
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        notepro.deleteTodo(id: noteData.id);
+                                      },
+                                      icon: Icon(Icons.delete),
+                                      color: Colors.red,
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.delete),
-                            color: Colors.red,
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -106,6 +121,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   AlertDialog adding(BuildContext context) {
+    final noteprovider = Provider.of<NoteProvider>(context);
     return AlertDialog(
       title: Text("Add Notes"),
       content: SizedBox(
@@ -113,7 +129,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             TextField(
-              controller: notescontroller,
+              controller: noteprovider.notescontroller,
               decoration: InputDecoration(
                 hintText: "Title",
                 hintMaxLines: 1,
@@ -124,7 +140,7 @@ class _HomePageState extends State<HomePage> {
               height: 20,
             ),
             TextField(
-              controller: descriptioncontroller,
+              controller: noteprovider.descriptioncontroller,
               decoration: InputDecoration(
                   hintText: "Description",
                   hintMaxLines: 1,
@@ -136,11 +152,9 @@ class _HomePageState extends State<HomePage> {
       actions: [
         TextButton(
             onPressed: () {
-              // setState(() {
-              //   adddnotes();
-              //   notescontroller.clear();
-              //   descriptioncontroller.clear();
-              // });
+              noteprovider.saveOnClick();
+              noteprovider.notescontroller.clear();
+              noteprovider.descriptioncontroller.clear();
               Navigator.of(context).pop();
             },
             child: Text("Save")),
@@ -153,10 +167,4 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
-
-  // adddnotes() {
-  //   String note = notescontroller.text;
-  //   String description = descriptioncontroller.text;
-  //   notes.add({"note": note, "description ": description});
-  // }
 }
