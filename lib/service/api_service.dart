@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:notes_app/model/notemodel.dart';
+import 'package:notes_app/model/note_model.dart';
 
 class ApiService {
   Dio dio = Dio();

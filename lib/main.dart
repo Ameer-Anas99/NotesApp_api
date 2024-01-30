@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/controller/noteprovider.dart';
+import 'package:notes_app/controller/note_provider.dart';
 import 'package:notes_app/view/home.dart';
 import 'package:provider/provider.dart';
 
@@ -15,9 +15,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => NoteProvider(),
       child: const MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
-          home: HomePage()),
+          debugShowCheckedModeBanner: false, home: HomePage()),
     );
   }
 }

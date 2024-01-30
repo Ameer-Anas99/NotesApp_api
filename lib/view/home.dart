@@ -1,10 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:notes_app/controller/noteprovider.dart';
-import 'package:notes_app/model/notemodel.dart';
-import 'package:notes_app/service/api_service.dart';
-import 'package:notes_app/view/editpage.dart';
+import 'package:notes_app/controller/note_provider.dart';
+import 'package:notes_app/model/note_model.dart';
+import 'package:notes_app/view/edit_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -20,17 +19,18 @@ class HomePage extends StatelessWidget {
       ),
       body: Center(
         child: RefreshIndicator(
-          onRefresh: () => ApiService().fetchApi(),
+          onRefresh: () =>
+              Provider.of<NoteProvider>(context, listen: false).fetchNotes(),
           child: Consumer<NoteProvider>(
-            builder: (context, notepro, child) => FutureBuilder(
-              future: ApiService().fetchApi(),
-              builder: (context, AsyncSnapshot<List<NoteModel>> snapshot) {
+            builder: (context, notepro, child) => FutureBuilder<void>(
+              future: notepro.fetchNotes(),
+              builder: (context, AsyncSnapshot<void> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text("Error: ${snapshot.error}");
                 } else {
-                  List<NoteModel> notesData = snapshot.data!;
+                  List<NoteModel> notesData = notepro.noteData;
                   return GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2),
@@ -50,17 +50,21 @@ class HomePage extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
-                                  "Title :${note}" ?? "",
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
+                                SingleChildScrollView(
+                                  child: Text(
+                                    "Title :${note}" ?? "",
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                                Text(
-                                  "Description: ${description}" ?? "",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
+                                SingleChildScrollView(
+                                  child: Text(
+                                    "Description: ${description}" ?? "",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                                 SizedBox(
                                   height: 10,

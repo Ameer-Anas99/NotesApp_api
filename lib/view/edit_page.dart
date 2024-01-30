@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/controller/noteprovider.dart';
-import 'package:notes_app/model/notemodel.dart';
+import 'package:notes_app/controller/note_provider.dart';
 import 'package:provider/provider.dart';
 
 class EditPage extends StatefulWidget {
@@ -31,31 +30,31 @@ class _EditPageState extends State<EditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: EditAlertDialog(),
+      body: editAlertDialog(),
     );
   }
 
-  AlertDialog EditAlertDialog() {
+  AlertDialog editAlertDialog() {
     final notespro = Provider.of<NoteProvider>(context);
     return AlertDialog(
-      title: Text("Edit Notes"),
+      title: const Text("Edit Notes"),
       content: SizedBox(
         height: 160,
         child: Column(
           children: [
             TextField(
               controller: notescontroller,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Title",
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 18,
             ),
             TextField(
               controller: descriptioncontroller,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Description",
                 border: OutlineInputBorder(),
               ),
@@ -72,13 +71,13 @@ class _EditPageState extends State<EditPage> {
                 description: descriptioncontroller.text);
             Navigator.of(context).pop();
           },
-          child: Text("Save"),
+          child: const Text("Save"),
         ),
         TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text("Cancel"))
+            child: const Text("Cancel"))
       ],
     );
   }
