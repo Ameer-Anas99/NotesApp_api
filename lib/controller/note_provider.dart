@@ -9,9 +9,9 @@ class NoteProvider extends ChangeNotifier {
   ApiService service = ApiService();
   List<NoteModel> noteData = [];
 
-  Future<void> fetchNotes() async {
+  Future<void> userNotesProvider() async {
     try {
-      noteData = await service.fetchApi();
+      noteData = await service.fetchNotes();
       notifyListeners();
     } catch (error) {
       print("Error fetching notes: $error");

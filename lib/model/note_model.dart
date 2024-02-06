@@ -14,9 +14,9 @@ class NoteModel {
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data["title"] = this.title;
-    data["description"] = this.description;
-    data["id"] = this.id;
+    data["title"] = title;
+    data["description"] = description;
+    data["id"] = id;
     return data;
   }
 }

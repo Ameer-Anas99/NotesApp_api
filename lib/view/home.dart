@@ -19,11 +19,11 @@ class HomePage extends StatelessWidget {
       ),
       body: Center(
         child: RefreshIndicator(
-          onRefresh: () =>
-              Provider.of<NoteProvider>(context, listen: false).fetchNotes(),
+          onRefresh: () => Provider.of<NoteProvider>(context, listen: false)
+              .userNotesProvider(),
           child: Consumer<NoteProvider>(
             builder: (context, notepro, child) => FutureBuilder<void>(
-              future: notepro.fetchNotes(),
+              future: notepro.userNotesProvider(),
               builder: (context, AsyncSnapshot<void> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator();
